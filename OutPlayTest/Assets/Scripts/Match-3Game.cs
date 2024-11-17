@@ -36,17 +36,16 @@ public class Board : MonoBehaviour
         public MoveDirection direction;
     }
 
-    int GetWidth() { /* Implementation */ return 0; }
-    int GetHeight() { /* Implementation */ return 0; }
-    JewelKind GetJewel(int x, int y) { /* Implementation */ return JewelKind.Empty; }
-    void SetJewel(int x, int y, JewelKind kind) { /* Implementation */ }
+    int GetWidth() { return 0; } //placeholder value
+    int GetHeight() { return 0; } // placeholder value
+    JewelKind GetJewel(int x, int y) { return JewelKind.Empty; } //placeholder value
+    void SetJewel(int x, int y, JewelKind kind) {  } //Implementation
 
-    Move CalculateBestMoveForBoard()
+    private Move CalculateBestMoveForBoard()
     {
         int w = GetWidth();
         int h = GetHeight();
         Move bestMove = new Move();
-
 
         //to iterate for all the jewels on the grid
         for (int x = 0; x < w; x++)
@@ -62,17 +61,15 @@ public class Board : MonoBehaviour
                         bestMove = new Move { x = x, y = y, direction = (MoveDirection)direction };
                     }
                 }
-
             }
-
         }
         return bestMove;
     }
 
-    bool TrySwap(int x, int y, MoveDirection direction, out int counter)
+    private bool TrySwap(int x, int y, MoveDirection direction, out int counter)
     {
         counter = 0;
-
+        
         int tempX = x, tempY = y;
         switch (direction)
         {
@@ -126,36 +123,36 @@ public class Board : MonoBehaviour
         // Check horizontal matches
         for (int y = 0; y < height; y++)
         {
-            int startX = 0;
-            while (startX < width)
+            int rowcount = 0;
+            while (rowcount < width)
             {
                 countX = 1;
-                JewelKind currentKind = GetJewel(startX, y);
+                JewelKind currentKind = GetJewel(rowcount, y);
 
                 // Count matching jewels
-                for (int x = startX + 1; x < width && GetJewel(x, y) == currentKind; x++)
+                for (int x = rowcount + 1; x < width && GetJewel(x, y) == currentKind; x++)
                 {
                     countX++;
                 }
-                startX += countX;
+                rowcount += countX;
             }
         }
 
         // Check vertical matches
         for (int x = 0; x < width; x++)
         {
-            int startY = 0;
-            while (startY < height)
+            int columncount = 0;
+            while (columncount < height)
             {
                 countY = 1;
-                JewelKind currentKind = GetJewel(x, startY);
+                JewelKind currentKind = GetJewel(x, columncount);
 
                 // Count matching jewels
-                for ( int y = startY + 1; y < height && GetJewel(x, y) == currentKind; y++)
+                for ( int y = columncount + 1; y < height && GetJewel(x, y) == currentKind; y++)
                 {
                     countY++;
                 }
-                startY += countY;
+                columncount += countY;
             }
         }
 
