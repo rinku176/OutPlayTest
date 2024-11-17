@@ -116,9 +116,12 @@ public class Board : MonoBehaviour
 
     private int CalculateMaxScore()
     {
-        int countX = 0, countY = 0;
+        int count = 0;
         int width = GetWidth();
         int height = GetHeight();
+        int Finalcounter = 0;
+
+        bool[,] matched = new bool[width, height]; //to track the matched jewels
 
         // Check horizontal matches
         for (int y = 0; y < height; y++)
@@ -126,15 +129,25 @@ public class Board : MonoBehaviour
             int rowcount = 0;
             while (rowcount < width)
             {
-                countX = 1;
+                count = 1;
                 JewelKind currentKind = GetJewel(rowcount, y);
 
                 // Count matching jewels
                 for (int x = rowcount + 1; x < width && GetJewel(x, y) == currentKind; x++)
                 {
-                    countX++;
+                    count++;
                 }
-                rowcount += countX;
+
+                // to store the matched jewels before the count resets to 1
+                if (count >= 3)
+                {
+                    for (int x = rowcount; x < rowcount + count; x++)
+                    {
+                        matched[x, y] = true;
+                    }
+                }
+
+                rowcount += count;
             }
         }
 
@@ -144,26 +157,41 @@ public class Board : MonoBehaviour
             int columncount = 0;
             while (columncount < height)
             {
-                countY = 1;
+                count = 1;
                 JewelKind currentKind = GetJewel(x, columncount);
 
                 // Count matching jewels
                 for ( int y = columncount + 1; y < height && GetJewel(x, y) == currentKind; y++)
                 {
-                    countY++;
+                    count++;
                 }
-                columncount += countY;
+
+                // to store the matched jewels before the count resets to 1
+                if (count >= 3)
+                {
+                    for (int y = columncount; y < columncount + count; y++)
+                    {
+                        matched[x, y] = true;
+                    }
+                }
+
+                columncount += count;
             }
         }
 
-        if (countX < 3)
-            countX = 0;
 
-        if (countY < 3)
-            countY = 0;
-
-        int counter = countX > countY ? countX : countY;
-        return counter;
+        //finally to count the matched jewels
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                if (matched[x, y])
+                {
+                    Finalcounter++;
+                }
+            }
+        }
+        return Finalcounter;
         
     }
 }
