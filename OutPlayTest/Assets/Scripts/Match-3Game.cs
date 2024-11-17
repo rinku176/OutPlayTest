@@ -1,11 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SocialPlatforms.Impl;
+using static UnityEngine.GraphicsBuffer;
 
 public class Board : MonoBehaviour
 {
+    int bestScore = 0;
     enum JewelKind
     {
         Empty,
@@ -32,27 +36,139 @@ public class Board : MonoBehaviour
         public MoveDirection direction;
     }
 
-    //int GetWidth();
-    //int GetHeight();
+    int GetWidth() { /* Implementation */ return 0; }
+    int GetHeight() { /* Implementation */ return 0; }
+    JewelKind GetJewel(int x, int y) { /* Implementation */ return JewelKind.Empty; }
+    void SetJewel(int x, int y, JewelKind kind) { /* Implementation */ }
 
-    //JewelKind GetJewel(int x, int y);
-    //void SetJewel(int x, int y, JewelKind kind);
     Move CalculateBestMoveForBoard()
     {
-        //int w = GetWidth();
-        //int h = GetHeight();
+        int w = GetWidth();
+        int h = GetHeight();
         Move bestMove = new Move();
-        int bestScore = 0;
 
 
-        // swap all the tiles in the grid.
-        //check in all direction if the JewelKind matches.
-        //swap back if not.
-        //else, start a count and count the points that will be acquired.
-        //compare it with the bestScore, if > bestScore = count; count =0;
-        //and then swap back, and repeat this for all tiles in the grid.
-        //in the end, return the best move (x,y, direction)
+        //to iterate for all the jewels on the grid
+        for (int x = 0; x < w; x++)
+        {
+            for (int y = 0; y < h; y++)
+            {
+                foreach (var direction in Enum.GetValues(typeof(MoveDirection)))
+                {
+                    //try to swap the two, and check if the count > bestScore so far
+                    if (TrySwap(x, y, (MoveDirection)direction, out int counter) && (counter > bestScore))
+                    {
+                        bestScore = counter;
+                        bestMove = new Move { x = x, y = y, direction = (MoveDirection)direction };
+                    }
+                }
 
+            }
+
+        }
         return bestMove;
     }
+
+    bool TrySwap(int x, int y, MoveDirection direction, out int counter)
+    {
+        counter = 0;
+
+        int tempX = x, tempY = y;
+        switch (direction)
+        {
+            case MoveDirection.Up:
+                tempY--;
+                break;
+            case MoveDirection.Down:
+                tempY++;
+                break;
+            case MoveDirection.Left:
+                tempX--;
+                break;
+            case MoveDirection.Right:
+                tempX++;
+                break;
+        }
+
+        //to check if its valid positions
+        if (!IsValidPosition(tempX, tempY))
+            return false;
+
+        Swap(x, y, tempX, tempY);
+
+        // Calculate max score
+        counter = CalculateMaxScore();
+
+        // Undo swap
+        Swap(x, y, tempX, tempY); 
+
+        return (counter > bestScore);
+    }
+
+    private void Swap(int x1, int y1, int x2, int y2)
+    {
+        JewelKind temp = GetJewel(x1, y1);
+        SetJewel(x1, y1, GetJewel(x2, y2));
+        SetJewel(x2, y2, temp);
+    }
+
+    private bool IsValidPosition(int x, int y)
+    {
+        return x >= 0 && y >= 0 && x < GetWidth() && y < GetHeight();
+    }
+
+    private int CalculateMaxScore()
+    {
+        int countX = 0, countY = 0;
+        int width = GetWidth();
+        int height = GetHeight();
+
+        // Check horizontal matches
+        for (int y = 0; y < height; y++)
+        {
+            int startX = 0;
+            while (startX < width)
+            {
+                countX = 1;
+                JewelKind currentKind = GetJewel(startX, y);
+
+                // Count matching jewels
+                for (int x = startX + 1; x < width && GetJewel(x, y) == currentKind; x++)
+                {
+                    countX++;
+                }
+                startX += countX;
+            }
+        }
+
+        // Check vertical matches
+        for (int x = 0; x < width; x++)
+        {
+            int startY = 0;
+            while (startY < height)
+            {
+                countY = 1;
+                JewelKind currentKind = GetJewel(x, startY);
+
+                // Count matching jewels
+                for ( int y = startY + 1; y < height && GetJewel(x, y) == currentKind; y++)
+                {
+                    countY++;
+                }
+                startY += countY;
+            }
+        }
+
+        if (countX < 3)
+            countX = 0;
+
+        if (countY < 3)
+            countY = 0;
+
+        int counter = countX > countY ? countX : countY;
+        return counter;
+        
+    }
 }
+
+
