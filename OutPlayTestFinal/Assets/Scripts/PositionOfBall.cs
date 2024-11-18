@@ -12,7 +12,7 @@ public class PositionOfBall : MonoBehaviour
     float w, // width of the space
     ref float xPosition)
     {
-        if (G <= 0 || w <= 0)
+        if (G >= 0 && w >= 0)
         {
             float a, b, c;
 
@@ -20,7 +20,7 @@ public class PositionOfBall : MonoBehaviour
             //0.5gt^2 - vt + (p-h) = 0
             a = 0.5f * G;
             b = -v.y;
-            c = p.y - h;
+            c = h - p.y;
 
             //quadratic equation
             float quadEq = b * b - 4 * a * c;
