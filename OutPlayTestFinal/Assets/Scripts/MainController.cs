@@ -5,9 +5,9 @@ using UnityEngine;
 public class MainController : MonoBehaviour
 {
     public Transform[] waypoints; // Set P1, P2, P3 in the Inspector
-    float speed = 5f;      // Movement speed
-    public GameObject particleEffectPrefab; // Prefab for the particle effect
-    public AudioClip collisionSound;       // Sound to play on collision
+    float speed = 5f; // speed of the Main Object
+    public GameObject particleEffect; 
+    public AudioClip collisionSound;  
 
     private int currentWaypointIndex = 0;
     private AudioSource audioSource;
@@ -41,14 +41,15 @@ public class MainController : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter(Collision collision)
     {
+        // Trigger effects on collision
         TriggerEffectsAndDestroy();
     }
 
     void TriggerEffectsAndDestroy()
     {
-        Instantiate(particleEffectPrefab, transform.position, Quaternion.identity);
+        Instantiate(particleEffect, transform.position, Quaternion.identity);
 
         // Play collision sound
         if (collisionSound != null)
