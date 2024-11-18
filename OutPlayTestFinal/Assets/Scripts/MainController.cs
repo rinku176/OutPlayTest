@@ -23,7 +23,6 @@ public class MainController : MonoBehaviour
     {
         if (currentWaypointIndex < waypoints.Length)
         {
-            // Move towards the current waypoint
             Transform target = waypoints[currentWaypointIndex];
             transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
 
@@ -43,8 +42,8 @@ public class MainController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        // Trigger effects on collision
-        TriggerEffectsAndDestroy();
+        if(collision.gameObject.tag != "Plane")
+            TriggerEffectsAndDestroy();
     }
 
     void TriggerEffectsAndDestroy()

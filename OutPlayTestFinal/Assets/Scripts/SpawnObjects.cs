@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class SpawnObjects : MonoBehaviour
 {
-    public GameObject objectPrefab; // Prefab to spawn
-    public int objectCount = 10; 
-    public Vector3 spawnArea = new Vector3(20, 0, 20); // Area to spawn objects
+    public GameObject objectToSpawn; // Prefab to spawn
+    public int objectCount = 100; 
+    public Vector3 spawnArea = new Vector3(40, 5, 40); // Area to spawn objects
 
     void Start()
     {
-        // Run this code only on the spawner GameObject
         SpawnRandomObject();
     }
 
@@ -19,13 +18,13 @@ public class SpawnObjects : MonoBehaviour
         for (int i = 0; i < objectCount; i++)
         {
             Vector3 randomPosition = new Vector3(
-                Random.Range(-spawnArea.x / 2, spawnArea.x / 2),
+                Random.Range(-spawnArea.x, spawnArea.x ),
                 Random.Range(0, spawnArea.y), 
-                Random.Range(-spawnArea.z / 2, spawnArea.z / 2)
+                Random.Range(-spawnArea.z, spawnArea.z)
             );
 
    
-            GameObject RandomItem = Instantiate(objectPrefab, randomPosition, Quaternion.identity);
+            GameObject RandomItem = Instantiate(objectToSpawn, randomPosition, Quaternion.identity);
 
             // To ensure the spawned object doesn't have the SpawnObjects script
             if (RandomItem.GetComponent<SpawnObjects>())
